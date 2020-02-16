@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
 import addons from "@storybook/addons";
-
-const ADDON_EVENT_NAME = "ADOON_UNIFORM_EVENT_NAME";
+import { ADDON_EVENT_NAME } from "./themeDecoratorConstants";
 
 const COLORS = {
     light: "yellow",

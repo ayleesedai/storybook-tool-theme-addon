@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect } from "react";
-import { useAddonState } from "@storybook/api";
-import addons from "@storybook/addons";
+import React, { useCallback } from "react";
+import { useAddonState, useChannel } from "@storybook/api";
+import { STORY_CHANGED } from "@storybook/core-events";
+import { ADDON_ID, ADDON_EVENT_NAME } from "./themeDecoratorConstants";
 
 const THEME_SWITCH_MAP = {
     light: "dark",
@@ -11,20 +12,16 @@ const THEME_OFFSET = {
     dark: 50
 };
 
-const ADDON_ID = "ADOON_UNIFORM_THEME";
-const ADDON_EVENT_NAME = "ADOON_UNIFORM_EVENT_NAME";
-
 const ThemeSwitcher = () => {
     const [theme, setTheme] = useAddonState(ADDON_ID, "light");
-    const switchTheme = useCallback(() => setTheme(THEME_SWITCH_MAP[theme]), [
-        theme,
-        setTheme
-    ]);
-    useEffect(() => {
-        const channel = addons.getChannel();
-        channel.emit(ADDON_EVENT_NAME, theme);
-    }, [theme]);
-    // const theme = "la merda";
+    const emit = useChannel({
+        [STORY_CHANGED]: () => emit(ADDON_EVENT_NAME, theme)
+    });
+    const switchTheme = useCallback(() => {
+        const newTheme = THEME_SWITCH_MAP[theme];
+        setTheme(newTheme);
+        emit(ADDON_EVENT_NAME, newTheme);
+    }, [setTheme]);
     return (
         <div
             style={{
